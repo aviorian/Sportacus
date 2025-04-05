@@ -27,6 +27,7 @@ router.post("/register", async (req, res) => {
     await newUser.save();
     res.status(201).json({ message: "User created successfully" });
   } catch (err) {
+    console.error("Register Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -40,11 +41,10 @@ router.post("/login", async (req, res) => {
     if (!user)
       return res.status(400).json({ message: "Invalid email or password" });
 
-    const hashedPassword = await hash(password, 10);
-    const isMatch = await compare(hashedPassword, user.password);
+    const isMatch = await compare(password, user.password);
 
     if (!isMatch)
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ message: "Invalid email or password0" });
 
     res.status(200).json({ message: "Login successful", user });
   } catch (err) {
