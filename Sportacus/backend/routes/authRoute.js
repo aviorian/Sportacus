@@ -7,24 +7,66 @@ const router = Router();
 // Register New User
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const {
+      firstName,
+      lastName,
+      birthDate,
+      birthCountry,
+      birthCity,
+      gender,
+      address,
+      phoneNumber,
+      email,
+      username,
+      password,
+    } = req.body;
 
+    // Check missing required fields
+    if (
+      !firstName ||
+      !lastName ||
+      !birthDate ||
+      !birthCountry ||
+      !birthCity ||
+      !gender ||
+      !email ||
+      !username ||
+      !password
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Please fill all required fields." });
+    }
+
+    // Check email exists
     const existingEmail = await User.findOne({ email });
     if (existingEmail)
       return res.status(400).json({ message: "Email already exists" });
+
+    // Check username exists
     const existingUsername = await User.findOne({ username });
     if (existingUsername)
       return res.status(400).json({ message: "Username already exists" });
 
+    // Hash password
     const hashedPassword = await hash(password, 10);
 
     const newUser = new User({
-      username,
+      firstName,
+      lastName,
+      birthDate,
+      birthCountry,
+      birthCity,
+      gender,
+      address, // Optional
+      phoneNumber, // Optional
       email,
+      username,
       password: hashedPassword,
     });
 
     await newUser.save();
+
     res.status(201).json({ message: "User created successfully" });
   } catch (err) {
     console.error("Register Error:", err);
