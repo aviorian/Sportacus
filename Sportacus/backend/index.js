@@ -4,15 +4,13 @@ import { connectDB } from "./db/connectDB.js";
 import authRoutes from "./routes/authRoute.js";
 
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-  res.send("Hello World! 123");
-});
+app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   connectDB();
-  console.log("Server is running on port 3000");
+  console.log("Server is running on port", PORT);
 });

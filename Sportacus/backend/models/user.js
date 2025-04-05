@@ -47,6 +47,12 @@ const userSchema = new Schema(
       type: String,
       required: true, //hashed password
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: String,
+    verificationTokenExpiresAt: Date,
   },
   { timestamps: true }
 );
