@@ -132,3 +132,4 @@ dist
 
 # Environmental Variable related docs
 .env
+Sportacus/.env
