@@ -2,3 +2,6 @@ MONGO_URI=mongodb+srv://<name>:<password>@cluster0.2btrcpz.mongodb.net/?retryWri
 PORT=3000
 
 mailtrapToken= "5066a758335204d8ad840b0fd1db5cd6"
+
+JWT_SECRET_KEY=secretkey
+NODE_ENV=development

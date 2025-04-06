@@ -1,8 +1,7 @@
 import { Router } from "express";
 import { hash, compare } from "bcryptjs";
 import User from "../models/user.js";
-
-
+import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 
 export const register = async (req, res) => {
     try {
@@ -69,8 +68,17 @@ export const register = async (req, res) => {
 
     await newUser.save();
 
-    sendVerificationEmail(newUser.email, verificationtoken); // Send verification email
-    res.status(201).json({ message: "User created successfully" });
+    //jwt
+    generateTokenAndSetCookie(res, newUser._id);
+
+    //sendVerificationEmail(newUser.email, verificationtoken); // Send verification email //where is this function?
+    
+    res.status(201).json({ message: "User created successfully",
+      user: {
+        ...newUser._doc,
+        password: undefined, // Exclude password from response
+      }
+     });
     
 
   } catch (err) {
@@ -92,12 +100,18 @@ export const login = async (req, res) => {
         if (!isMatch)
           return res.status(400).json({ message: "Invalid email or password0" });
     
+        //jwt
+        generateTokenAndSetCookie(res, user._id); // Use newUser instead of user
+
         res.status(200).json({ message: "Login successful", user });
+        
+
       } catch (err) {
         res.status(500).json({ message: "Server error" });
       }
 }
 
 export const logout = (req, res) => {
+    res.clearCookie("token"); // Clear the cookie
     res.status(200).json({ message: "Logout successful" });
 }
