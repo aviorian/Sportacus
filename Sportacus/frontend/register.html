@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol - GetGood</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>Kayıt Ol</h2>
+        <form id="registerForm" onsubmit="return registerUser(event)">
+            <label for="firstName">Ad *</label>
+            <input type="text" id="firstName" required>
+
+            <label for="lastName">Soyad *</label>
+            <input type="text" id="lastName" required>
+
+            <label for="birthDate">Doğum Tarihi *</label>
+            <input type="date" id="birthDate" required>
+
+            <label for="birthCountry">Doğum Ülkesi *</label>
+            <input type="text" id="birthCountry" required>
+
+            <label for="birthCity">Doğum Şehri *</label>
+            <input type="text" id="birthCity" required>
+
+            <label for="gender">Cinsiyet *</label>
+            <select id="gender" required>
+                <option value="">Seçiniz</option>
+                <option value="Erkek">Erkek</option>
+                <option value="Kadın">Kadın</option>
+                <option value="Diğer">Diğer</option>
+            </select>
+
+            <label for="address">Adres</label>
+            <input type="text" id="address">
+
+            <label for="phone">Telefon</label>
+            <input type="tel" id="phone">
+
+            <label for="email">Email *</label>
+            <input type="email" id="email" required>
+
+            <button type="submit">Kayıt Ol</button>
+            <p id="error-message"></p>
+        </form>
+        <p>Zaten hesabın var mı? <a href="login.html">Giriş Yap</a></p>
+    </div>
+
+    <script>
+        function registerUser(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+
+            // Basit e-posta kontrolü
+            if (!email.includes('@')) {
+                document.getElementById('error-message').textContent = 'Geçerli bir email giriniz!';
+                return false;
+            }
+
+            alert("Kayıt başarılı! Lütfen şifre oluşturma bağlantısını içeren e-postanızı kontrol edin.");
+            window.location.href = "create-password.html";
+            return false;
+        }
+    </script>
+</body>
+</html>
