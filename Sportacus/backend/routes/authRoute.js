@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteAccount, login, logout, register } from "../controllers/authController.js";
+import { deleteAccount, login, logout, register, verificationAndPassword } from "../controllers/authController.js";
 
 
 const router = Router();
@@ -14,5 +14,7 @@ router.post("/login", login);
 router.post("/logout", logout);
 
 router.post("/delete", deleteAccount);
+
+router.post("/verificationAndPassword", verificationAndPassword);
 
 export default router;

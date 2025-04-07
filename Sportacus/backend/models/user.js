@@ -45,7 +45,6 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: true, //hashed password
     },
     isVerified: {
       type: Boolean,

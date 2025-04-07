@@ -19,11 +19,13 @@ export const VERIFICATION_EMAIL_TEMPLATE = `
     <p>Enter this code on the verification page to complete your registration.</p>
     <p>This code will expire in 15 minutes for security reasons.</p>
     <p>If you didn't create an account with us, please ignore this email.</p>
-    <p>Best regards,<br>Your App Team</p>
+    <p>Best regards,<br>Your http://localhost:3000/api/auth/verificationAndPassword Team</p>
+    <link rel="stylesheet" href="http://localhost:3000/api/auth/verificationAndPassword" />
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
   </div>
+  
 </body>
 </html>
 `;
@@ -90,6 +92,7 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
   </div>
+
 </body>
 </html>
 `;
