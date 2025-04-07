@@ -2,6 +2,7 @@ import { Router } from "express";
 import { hash, compare } from "bcryptjs";
 import User from "../models/user.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { getUserFromToken } from "../utils/generateTokenAndSetCookie.js"; // Import the function to get user from token
 
 export const register = async (req, res) => {
     try {
@@ -114,4 +115,33 @@ export const login = async (req, res) => {
 export const logout = (req, res) => {
     res.clearCookie("token"); // Clear the cookie
     res.status(200).json({ message: "Logout successful" });
+}
+
+export const deleteAccount = async (req, res) => {
+  
+  const { password } = req.body; // Get the password from the request body
+  
+  try {
+    const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
+    const currentUser = await getUserFromToken(token); // get the user form the token
+    if (!currentUser) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    const userPassword = currentUser.password; // Get the password from the currentUser object 
+    
+    const isMatch = await compare(password, userPassword); // Compare the password from the request with the hashed password in the database
+    
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid password" });
+    }
+      await User.findOneAndDelete(currentUser._id); // Delete the user from the database
+      res.status(200).json({ message: "Account deleted successfully" });
+      res.clearCookie("token"); // Clear the cookie
+      
+
+  } catch (error) {
+    res.status(500).json({ message: "Error, couldn't delete" });
+  }
+
 }
