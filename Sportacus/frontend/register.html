@@ -11,6 +11,9 @@
     <div class="login-container">
         <h2>Kayıt Ol</h2>
         <form id="registerForm" onsubmit="return registerUser(event)">
+            <label for="username">Kullanıcı Adı *</label>
+            <input type="text" id="username" required>
+
             <label for="firstName">Ad *</label>
             <input type="text" id="firstName" required>
 
@@ -29,9 +32,9 @@
             <label for="gender">Cinsiyet *</label>
             <select id="gender" required>
                 <option value="">Seçiniz</option>
-                <option value="Erkek">Erkek</option>
-                <option value="Kadın">Kadın</option>
-                <option value="Diğer">Diğer</option>
+                <option value="Male">Erkek</option>
+                <option value="Female">Kadın</option>
+                <option value="Other">Diğer</option>
             </select>
 
             <label for="address">Adres</label>
@@ -53,16 +56,71 @@
         function registerUser(event) {
             event.preventDefault();
 
+            const username = document.getElementById('username').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const birthCountry = document.getElementById('birthCountry').value;
+            const birthCity = document.getElementById('birthCity').value;
+            const gender = document.getElementById('gender').value;
+            const address = document.getElementById('address').value;
+            const phone = document.getElementById('phone').value;
             const email = document.getElementById('email').value;
+
+            const userData = {
+        firstName: firstName,
+        lastName: lastName,
+        birthDate: birthDate,
+        birthCountry: birthCountry,
+        birthCity: birthCity,
+        gender: gender,
+        address: address,  // optional field
+        phoneNumber: phone, // optional field
+        email: email,
+        username: username
+    };
+
+
 
             // Basit e-posta kontrolü
             if (!email.includes('@')) {
                 document.getElementById('error-message').textContent = 'Geçerli bir email giriniz!';
                 return false;
             }
+            
+            //API Endpoint http://localhost:3000/api/auth/register
 
+            // Send the registration request to the backend API
+    fetch('http://localhost:3000/api/auth/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === "Waiting for verification") {
+            // Show a success popup
             alert("Kayıt başarılı! Lütfen şifre oluşturma bağlantısını içeren e-postanızı kontrol edin.");
-            window.location.href = "create-password.html";
+            window.location.href = "create-password.html"; // Redirect to password creation page
+        } else if (data.message === "Email already exists") {
+            // Show email already exists error
+            document.getElementById('error-message').textContent = 'Bu e-posta zaten kullanılıyor.';
+        } else if (data.message === "Username already exists") {
+            // Show username already exists error
+            document.getElementById('error-message').textContent = 'Bu kullanıcı adı zaten alınmış.';
+        } else {
+            // Show generic error message
+            document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin0.';
+        }
+    })
+    .catch(error => {
+        console.error("Error during registration:", error);
+        // Show error if network or server issues
+        document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+    });
+
             return false;
         }
     </script>

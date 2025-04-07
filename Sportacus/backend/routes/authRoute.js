@@ -1,6 +1,11 @@
 import { Router } from "express";
-import { deleteAccount, login, logout, register, verificationAndPassword } from "../controllers/authController.js";
-
+import {
+  deleteAccount,
+  login,
+  logout,
+  register,
+  verificationAndPassword,
+} from "../controllers/authController.js";
 
 const router = Router();
 

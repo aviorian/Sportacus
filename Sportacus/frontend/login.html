@@ -36,9 +36,38 @@
                 return false;
             }
 
-            // Giriş başarılı kabul ediliyor (örnek)
-            alert("Giriş başarılı!");
-            window.location.href = "home.html";
+            const requestBody= {email:email, password:password}
+
+
+            fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === "Login successful") {
+            // Show a success popup
+            alert("Başarıyla giriş yaptınız!");
+            window.location.href = "index.html"; // Redirect to password creation page
+        } else if (data.message === "Invalid email or password") {
+          
+            document.getElementById('error-message').textContent = 'Email ya da şifreniz hatalı.';
+        } else {
+            // Show generic error message
+            document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin0.';
+        }
+    })
+    .catch(error => {
+        console.error("Error during verification:", error);
+        // Show error if network or server issues
+        document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+    });
+
+
+      
             return false;
         }
     </script>
