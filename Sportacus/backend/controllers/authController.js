@@ -4,6 +4,7 @@ import User from "../models/user.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { getUserFromToken } from "../utils/generateTokenAndSetCookie.js"; // Import the function to get user from token
 import { sendVerificationEmail } from "../mailtrap/emails.js"; // Import the email sending function
+import user from "../models/user.js";
 
 export const register = async (req, res) => {
     try {
@@ -17,8 +18,7 @@ export const register = async (req, res) => {
       address,
       phoneNumber,
       email,
-      username,
-      password,
+      username
     } = req.body;
 
     // Check missing required fields
@@ -30,8 +30,7 @@ export const register = async (req, res) => {
       !birthCity ||
       !gender ||
       !email ||
-      !username ||
-      !password
+      !username
     ) {
       return res
         .status(400)
@@ -48,8 +47,7 @@ export const register = async (req, res) => {
     if (existingUsername)
       return res.status(400).json({ message: "Username already exists" });
 
-    // Hash password
-    const hashedPassword = await hash(password, 10);
+
     const verificationtoken = Math.floor(100000 + Math.random() * 900000); 
 
     const newUser = new User({
@@ -63,9 +61,8 @@ export const register = async (req, res) => {
       phoneNumber, // Optional
       email,
       username,
-      password: hashedPassword,
       verificationToken: verificationtoken,
-      verificationTokenExpiresAt: Date.now() + 24*60*60*1000, // 24 hour later from now
+      verificationTokenExpiresAt: Date.now() + 15*60*1000, // 24 hour later from now
     });
 
     await newUser.save();
@@ -73,9 +70,9 @@ export const register = async (req, res) => {
     //jwt
     generateTokenAndSetCookie(res, newUser._id);
 
-    await sendVerificationEmail(newUser.email, verificationtoken); // Send verification email //where is this function?
+    await sendVerificationEmail(newUser.email, verificationtoken); // Send verification email //where is this function? 
     
-    res.status(201).json({ message: "User created successfully",
+    res.status(201).json({ message: "Waiting for verification", 
       user: {
         ...newUser._doc,
         password: undefined, // Exclude password from response
@@ -100,7 +97,7 @@ export const login = async (req, res) => {
         const isMatch = await compare(password, user.password);
     
         if (!isMatch)
-          return res.status(400).json({ message: "Invalid email or password0" });
+          return res.status(400).json({ message: "Invalid email or password" });
     
         //jwt
         generateTokenAndSetCookie(res, user._id); // Use newUser instead of user
@@ -136,13 +133,42 @@ export const deleteAccount = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
     }
-      await User.findOneAndDelete(currentUser._id); // Delete the user from the database
-      res.status(200).json({ message: "Account deleted successfully" });
       res.clearCookie("token"); // Clear the cookie
+      await User.findOneAndDelete(currentUser._id); // Delete the user from the database
+      
+      res.status(200).json({ message: "Account deleted successfully" });
       
 
   } catch (error) {
     res.status(500).json({ message: "Error, couldn't delete" });
   }
 
+  
+  
+
+}
+    export const verificationAndPassword = async (req, res) => {
+      try {
+        const {verificationCode, password} = req.body; // Get the vericication code and password from the request body
+        
+        const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
+        const currentUser = await getUserFromToken(token); // get the user form the token
+
+        if(currentUser.verificationToken == verificationCode && currentUser.verificationTokenExpiresAt > Date.now()){
+          
+          currentUser.password = await hash(password, 10); // Hash the password
+          currentUser.isVerified = true; // Set the user as verified
+          currentUser.verificationToken = undefined; // Clear the verification token
+          currentUser.verificationTokenExpiresAt = undefined; // Clear the verification token expiration date
+          await currentUser.save(); // Save the updated user to the database
+
+
+          return res.status(200).json({message: "Verification successful"}); // Verification successful
+        }
+
+
+      } catch (error) {
+        console.error("Verification Error:", error); // Log the error
+        res.status(500).json({ message: "Server error" }); // Send a server error response
+      }
 }
