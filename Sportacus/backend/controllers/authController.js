@@ -3,6 +3,7 @@ import { hash, compare } from "bcryptjs";
 import User from "../models/user.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { getUserFromToken } from "../utils/generateTokenAndSetCookie.js"; // Import the function to get user from token
+import { sendVerificationEmail } from "../mailtrap/emails.js"; // Import the email sending function
 
 export const register = async (req, res) => {
     try {
@@ -72,7 +73,7 @@ export const register = async (req, res) => {
     //jwt
     generateTokenAndSetCookie(res, newUser._id);
 
-    //sendVerificationEmail(newUser.email, verificationtoken); // Send verification email //where is this function?
+    await sendVerificationEmail(newUser.email, verificationtoken); // Send verification email //where is this function?
     
     res.status(201).json({ message: "User created successfully",
       user: {
