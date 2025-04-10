@@ -103,7 +103,7 @@
         if (data.message === "Waiting for verification") {
             // Show a success popup
             alert("Kayıt başarılı! Lütfen şifre oluşturma bağlantısını içeren e-postanızı kontrol edin.");
-            window.location.href = "create-password.html"; // Redirect to password creation page
+            
         } else if (data.message === "Email already exists") {
             // Show email already exists error
             document.getElementById('error-message').textContent = 'Bu e-posta zaten kullanılıyor.';

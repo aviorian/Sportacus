@@ -18,8 +18,9 @@ export const VERIFICATION_EMAIL_TEMPLATE = `
     </div>
     <p>Enter this code on the verification page to complete your registration.</p>
     <p>This code will expire in 15 minutes for security reasons.</p>
+    <p>Here is the verification page: http://localhost:3000/create-password.html</p>
     <p>If you didn't create an account with us, please ignore this email.</p>
-    <p>Best regards,<br>Your http://localhost:3000/api/auth/verificationAndPassword Team</p>
+    <p>Best regards, GetGood Team</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>

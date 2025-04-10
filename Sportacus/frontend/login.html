@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giriş Yap - GetGood</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .login-container h2 {
+            color: rgb(24, 150, 234);
+        }
+    </style>
 </head>
 <body>
 
@@ -52,12 +57,16 @@
             // Show a success popup
             alert("Başarıyla giriş yaptınız!");
             window.location.href = "index.html"; // Redirect to password creation page
-        } else if (data.message === "Invalid email or password") {
-          
+        } 
+        else if(data.message ==="Please verify your email"){
+            document.getElementById('error-message').textContent = 'Please verify your email before logging in.';
+        } 
+        else if (data.message === "Invalid email or password") {         
             document.getElementById('error-message').textContent = 'Email ya da şifreniz hatalı.';
-        } else {
+        }
+        else {
             // Show generic error message
-            document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin0.';
+            document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
         }
     })
     .catch(error => {

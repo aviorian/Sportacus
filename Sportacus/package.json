@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "backend/index.js",
   "scripts": {
-    "dev": "nodemon backend/index.js"
+    "dev": "concurrently \"nodemon backend/index.js\" \"start chrome http://localhost:3000/login.html\""
   },
   "keywords": [],
   "author": "",

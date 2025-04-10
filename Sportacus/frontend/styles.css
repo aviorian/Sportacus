@@ -15,9 +15,11 @@ body {
     width: 100%;
     max-width: 400px;
 }
-
+p {
+    color: rgba(226, 209, 209, 0.59);
+}
 h1 {
-    color: #333;
+    color: rgba(226, 209, 209, 0.59);
 }
 
 .card {
@@ -29,7 +31,7 @@ h1 {
 }
 
 label {
-    color: rgba(223, 190, 190, 0.59);
+    color: rgba(226, 209, 209, 0.59);
     font-weight: bold;
     display: block;
     margin-top: 10px;

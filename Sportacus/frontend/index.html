@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ana Sayfa - GetGood</title>
     <link rel="stylesheet" href="styles.css">
+    
 </head>
 <body>
 
@@ -12,12 +13,43 @@
         <h1>Hoş Geldiniz, GetGood Kullanıcısı!</h1>
         <p>Ürünleri keşfetmeye başlayabilirsiniz.</p>
         <button onclick="logout()">Çıkış Yap</button>
+        <button onclick="deleteAccount()">Hesabımı Sil</button>
     </div>
 
     <script>
-        function logout() {
-            alert("Çıkış yapılıyor...");
-            window.location.href = "login.html";
+        async function logout() {
+            const response = await fetch('http://localhost:3000/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (response.ok) {
+                alert("Çıkış yapıldı.");
+                window.location.href = "login.html";
+            } else {
+                alert("Çıkış yapılamadı. Lütfen tekrar deneyin.");
+            }
+        }
+    
+        async function deleteAccount() {
+            const confirmation = confirm("Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.");
+            if (confirmation) {
+                const response = await fetch('http://localhost:3000/api/auth/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+    
+                if (response.ok) {
+                    alert("Hesabınız silindi.");
+                    window.location.href = "register.html";
+                } else {
+                    alert("Hesap silinemedi. Lütfen tekrar deneyin.");
+                }
+            }
         }
     </script>
 
