@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { hash, compare } from "bcryptjs";
 import User from "../models/user.js";
-import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-import { getUserFromToken } from "../utils/generateTokenAndSetCookie.js"; // Import the function to get user from token
+import { generateTokenAndSetCookie, getUserFromToken } from "../utils/generateTokenAndSetCookie.js";
 import { sendVerificationEmail } from "../mailtrap/emails.js"; // Import the email sending function
+
 
 export const register = async (req, res) => {
   try {
@@ -160,4 +160,72 @@ export const verificationAndPassword = async (req, res) => {
     console.error("Verification Error:", error); // Log the error
     res.status(500).json({ message: "Server error" }); // Send a server error response
   }
+
+  
 };
+
+  export const editAccount = async (req, res) => {//called from an update button in profile page
+
+     const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
+      const currentUser = await getUserFromToken(token); // get the user form the token
+
+try {
+    const {
+      firstName,
+      lastName,
+      password,
+      phoneNumber,
+      email,
+    } = req.body;
+
+    // Check missing required fields
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !password
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Please fill all required fields." });
+    }
+
+    if(currentUser.firstName != firstName){
+      currentUser.firstName = firstName;
+    }
+    if(currentUser.lastName != lastName){
+      currentUser.lastName = lastName;
+    }
+    if(currentUser.phoneNumber != phoneNumber){
+      currentUser.phoneNumber = phoneNumber;
+    }
+    if(currentUser.email != email){
+      currentUser.email = email;
+    }
+    if(currentUser.password != password){
+      currentUser.password = await hash(password, 10); // Hash the password
+    }
+
+
+
+
+
+    res.status(201).json({
+      message: "Account updated successfully",
+    });
+  } catch (err) {
+    console.error("Edit Account Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+
+  };
+    export const  getUser= async (req, res) => {
+      const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
+      const currentUser = await getUserFromToken(token); // get the user form the token
+      if (!currentUser) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      else {
+        return res.status(200).json({ message: "User found", user: currentUser });
+      }
+  }

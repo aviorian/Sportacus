@@ -14,6 +14,7 @@
         <p>Ürünleri keşfetmeye başlayabilirsiniz.</p>
         <button onclick="logout()">Çıkış Yap</button>
         <button onclick="deleteAccount()">Hesabımı Sil</button>
+        <button onclick="editAccount()">profil</button>
     </div>
 
     <script>
@@ -51,6 +52,16 @@
                 }
             }
         }
+        function editAccount() {
+            
+            const response = fetch('http://localhost:3000/api/auth/getUser', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                window.location.href = "profile.html";
+        } 
     </script>
 
 </body>

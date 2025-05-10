@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - GetGood</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<script>
+    
+ 
+    async function getUser() {
+        fetch('http://localhost:3000/api/auth/getUser', {
+            method: 'GET', // Use GET for fetching user data
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include', // Include cookies for authentication
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("User name:",data , data.user.username);
+            // Populate the form fields with the user data
+            document.getElementById('username').value = data.user.username;
+            document.getElementById('firstName').value = data.user.firstName;
+            document.getElementById('lastName').value = data.user.lastName;
+            //document.getElementById('birthDate').value = data.birthDate;
+            document.getElementById('birthCountry').value = data.user.birthCountry;
+            document.getElementById('birthCity').value = data.user.birthCity;
+            document.getElementById('gender').value = data.user.gender;
+            document.getElementById('address').value = data.user.address || ''; // Optional field
+            document.getElementById('phone').value = data.user.phoneNumber || ''; // Optional field
+            document.getElementById('email').value = data.user.email;
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+            document.getElementById('error-message').textContent = 'Kullanıcı bilgileri alınamadı.';
+        });
+        
+    }
+    
+
+    // Call getUser when the page loads
+    document.addEventListener('DOMContentLoaded', async () => {
+        await getUser();
+    });
+</script>
+    <div class="login-container">
+        <h2>Profil Bilgileri</h2>
+        <form id="editForm" onsubmit="return editUser(event)">
+            <label for="username">Kullanıcı Adı *</label>
+            <input type="text" id="username" disabled>
+
+            <label for="firstName">Ad *</label>
+            <input type="text" id="firstName" required>
+
+            <label for="lastName">Soyad *</label>
+            <input type="text" id="lastName" required>
+
+            <label for="birthDate">Doğum Tarihi *</label>
+            <input type="date" id="birthDate" disabled>
+
+            <label for="birthCountry">Doğum Ülkesi *</label>
+            <input type="text" id="birthCountry" disabled>
+
+            <label for="birthCity">Doğum Şehri *</label>
+            <input type="text" id="birthCity" disabled>
+
+            <label for="gender">Cinsiyet *</label>
+            <input type="gender" id="gender" disabled>
+         
+            <label for="address">Adres</label>
+            <input type="text" id="address" disabled>
+
+            <label for="phone">Telefon</label>
+            <input type="tel" id="phone" >
+
+            <label for="email">Email *</label>
+            <input type="email" id="email" required>
+
+            <label for="password">password *</label>
+            <input type="password" id="password" required>
+
+            <button type="submit">Kaydet</button>
+            <p id="error-message"></p>
+        </form>
+    </div>
+
+    <script>
+        function editUser(event) {
+            event.preventDefault();
+
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const password = document.getElementById('password').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+
+            const userData = {
+        firstName: firstName,
+        lastName: lastName,
+        password: password,
+        phoneNumber: phone, // optional field
+        email: email
+    };
+
+
+
+            // Basit e-posta kontrolü
+            if (!email.includes('@')) {
+                document.getElementById('error-message').textContent = 'Geçerli bir email giriniz!';
+                return false;
+            }
+            
+            //API Endpoint http://localhost:3000/api/auth/register
+
+            // Send the registration request to the backend API
+    fetch('http://localhost:3000/api/auth/editAccount', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === "Waiting for verification") {
+            // Show a success popup
+            alert("Kayıt başarılı! Lütfen şifre oluşturma bağlantısını içeren e-postanızı kontrol edin.");
+            
+        } else if (data.message === "Email already exists") {
+            // Show email already exists error
+            document.getElementById('error-message').textContent = 'Bu e-posta zaten kullanılıyor.';
+        } else if (data.message === "Username already exists") {
+            // Show username already exists error
+            document.getElementById('error-message').textContent = 'Bu kullanıcı adı zaten alınmış.';
+        } else {
+            // Show generic error message
+            document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin0.';
+        }
+    })
+    .catch(error => {
+        console.error("Error during registration:", error);
+        // Show error if network or server issues
+        document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+    });
+
+            return false;
+        }
+    </script>
+</body>
+</html>

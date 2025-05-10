@@ -5,7 +5,10 @@ import {
   logout,
   register,
   verificationAndPassword,
+  editAccount,
+  getUser,
 } from "../controllers/authController.js";
+
 
 const router = Router();
 
@@ -21,5 +24,9 @@ router.post("/logout", logout);
 router.post("/delete", deleteAccount);
 
 router.post("/verificationAndPassword", verificationAndPassword);
+
+router.post("/editAccount", editAccount);
+
+router.get("/getUser", getUser);
 
 export default router;
