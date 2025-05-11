@@ -8,8 +8,6 @@
 </head>
 <body>
 <script>
-    
- 
     async function getUser() {
         fetch('http://localhost:3000/api/auth/getUser', {
             method: 'GET', // Use GET for fetching user data
@@ -25,12 +23,16 @@
             return response.json();
         })
         .then(data => {
-            console.log("User name:",data , data.user.username);
+            console.log("User name:",data , data.user.birthDate);
             // Populate the form fields with the user data
             document.getElementById('username').value = data.user.username;
             document.getElementById('firstName').value = data.user.firstName;
             document.getElementById('lastName').value = data.user.lastName;
-            //document.getElementById('birthDate').value = data.birthDate;
+
+            const birthDate = new Date(data.user.birthDate);
+            const formattedDate = birthDate.toISOString().split('T')[0];
+
+            document.getElementById('birthDate').value = formattedDate;
             document.getElementById('birthCountry').value = data.user.birthCountry;
             document.getElementById('birthCity').value = data.user.birthCity;
             document.getElementById('gender').value = data.user.gender;
@@ -44,7 +46,6 @@
         });
         
     }
-    
 
     // Call getUser when the page loads
     document.addEventListener('DOMContentLoaded', async () => {
@@ -88,6 +89,9 @@
             <input type="password" id="password" required>
 
             <button type="submit">Kaydet</button>
+
+            <button type="button" onclick="window.location.href='index.html'">Ana Menüye Dön</button> 
+
             <p id="error-message"></p>
         </form>
     </div>
@@ -96,7 +100,6 @@
         function editUser(event) {
             event.preventDefault();
 
-            
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
             const password = document.getElementById('password').value;
@@ -104,14 +107,12 @@
             const email = document.getElementById('email').value;
 
             const userData = {
-        firstName: firstName,
-        lastName: lastName,
-        password: password,
-        phoneNumber: phone, // optional field
-        email: email
-    };
-
-
+            firstName: firstName,
+            lastName: lastName,
+            password: password,
+            phoneNumber: phone, // optional field
+            email: email
+        };
 
             // Basit e-posta kontrolü
             if (!email.includes('@')) {
@@ -122,30 +123,28 @@
             //API Endpoint http://localhost:3000/api/auth/register
 
             // Send the registration request to the backend API
-    fetch('http://localhost:3000/api/auth/editAccount', {
-        method: 'POST',
-        headers: {
+        fetch('http://localhost:3000/api/auth/editAccount', {
+            method: 'POST',
+            headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(userData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message === "Waiting for verification") {
-            // Show a success popup
-            alert("Kayıt başarılı! Lütfen şifre oluşturma bağlantısını içeren e-postanızı kontrol edin.");
-            
-        } else if (data.message === "Email already exists") {
-            // Show email already exists error
-            document.getElementById('error-message').textContent = 'Bu e-posta zaten kullanılıyor.';
-        } else if (data.message === "Username already exists") {
-            // Show username already exists error
-            document.getElementById('error-message').textContent = 'Bu kullanıcı adı zaten alınmış.';
-        } else {
-            // Show generic error message
-            document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin0.';
-        }
-    })
+            },
+            body: JSON.stringify(userData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === "Waiting for verification") {
+                alert("Kayıt başarılı! Lütfen şifre oluşturma bağlantısını içeren e-postanızı kontrol edin.");
+            } else if (data.message === "Email already exists") {
+                document.getElementById('error-message').textContent = 'Bu e-posta zaten kullanılıyor.';
+            } else if (data.message === "Username already exists") {
+                document.getElementById('error-message').textContent = 'Bu kullanıcı adı zaten alınmış.';
+            } else if (data.message === "Account updated successfully") {
+                alert("Bilgiler başarıyla güncellendi.");
+                document.getElementById('error-message').textContent = '';
+            } else {
+                document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+            }
+        })
     .catch(error => {
         console.error("Error during registration:", error);
         // Show error if network or server issues

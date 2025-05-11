@@ -19,9 +19,11 @@ p {
     color: rgba(226, 209, 209, 0.59);
 }
 h1 {
-    color: rgba(226, 209, 209, 0.59);
+    color: rgb(249, 240, 240);
 }
-
+h2{
+    color: rgb(249, 240, 240);
+}
 .card {
     background: #fff;
     padding: 20px;
@@ -45,6 +47,18 @@ input, select {
     border-radius: 5px;
 }
 
+input:disabled {
+    background-color: #b3b3b3; 
+    color: #000;               
+    opacity: 1;                
+    border: 1px solid #ccc;   
+}
+
+#error-message {
+    color: #ffffff; /* gri */
+    font-weight: normal; /* isteğe bağlı */
+}
+
 button {
     width: 100%;
     background-color: #4CAF50;
@@ -64,4 +78,10 @@ button:hover {
     margin-top: 15px;
     font-size: 18px;
     font-weight: bold;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 100px auto 0 auto; /* 🆕 Sayfanın üstünden 100px boşluk bırakır */
+    padding: 20px;
 }

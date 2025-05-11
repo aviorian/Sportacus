@@ -164,12 +164,11 @@ export const verificationAndPassword = async (req, res) => {
   
 };
 
-  export const editAccount = async (req, res) => {//called from an update button in profile page
+export const editAccount = async (req, res) => {
+  const token = req.cookies.token;
+  const currentUser = await getUserFromToken(token);
 
-     const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
-      const currentUser = await getUserFromToken(token); // get the user form the token
-
-try {
+  try {
     const {
       firstName,
       lastName,
@@ -178,37 +177,21 @@ try {
       email,
     } = req.body;
 
-    // Check missing required fields
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !password
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Please fill all required fields." });
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ message: "Please fill all required fields." });
     }
 
-    if(currentUser.firstName != firstName){
-      currentUser.firstName = firstName;
-    }
-    if(currentUser.lastName != lastName){
-      currentUser.lastName = lastName;
-    }
-    if(currentUser.phoneNumber != phoneNumber){
-      currentUser.phoneNumber = phoneNumber;
-    }
-    if(currentUser.email != email){
-      currentUser.email = email;
-    }
-    if(currentUser.password != password){
-      currentUser.password = await hash(password, 10); // Hash the password
+    if (currentUser.firstName !== firstName) currentUser.firstName = firstName;
+    if (currentUser.lastName !== lastName) currentUser.lastName = lastName;
+    if (currentUser.phoneNumber !== phoneNumber) currentUser.phoneNumber = phoneNumber;
+    if (currentUser.email !== email) currentUser.email = email;
+
+    const passwordChanged = !(await compare(password, currentUser.password)); // Şifre değişti mi kontrol et
+    if (passwordChanged) {
+      currentUser.password = await hash(password, 10);
     }
 
-
-
-
+    await currentUser.save(); // <--- EN ÖNEMLİ KISIM
 
     res.status(201).json({
       message: "Account updated successfully",
@@ -217,7 +200,6 @@ try {
     console.error("Edit Account Error:", err);
     res.status(500).json({ message: "Server error" });
   }
-
   };
     export const  getUser= async (req, res) => {
       const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
