@@ -7,6 +7,7 @@ import {
   verificationAndPassword,
   editAccount,
   getUser,
+  setAndSendVerificationCode
 } from "../controllers/authController.js";
 
 
@@ -28,5 +29,7 @@ router.post("/verificationAndPassword", verificationAndPassword);
 router.post("/editAccount", editAccount);
 
 router.get("/getUser", getUser);
+
+router.get("/sendVerificationCode", setAndSendVerificationCode);
 
 export default router;

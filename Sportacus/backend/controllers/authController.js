@@ -211,3 +211,15 @@ export const editAccount = async (req, res) => {
         return res.status(200).json({ message: "User found", user: currentUser });
       }
   }
+
+
+
+  export const setAndSendVerificationCode = async (req, res) => {
+    const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
+    const currentUser = await getUserFromToken(token);
+    currentUser.verificationToken = Math.floor(100000 + Math.random() * 900000);
+    currentUser.verificationTokenExpiresAt = Date.now() + 15 * 60 * 1000,
+    await currentUser.save();
+    //await sendVerificationEmail(currentUser.email, currentUser.verificationToken);
+    return res.status(200).json({ message: "Verification Code Sent", });
+  }
