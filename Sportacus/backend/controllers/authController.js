@@ -60,7 +60,8 @@ export const register = async (req, res) => {
       email,
       username,
       verificationToken: verificationtoken,
-      verificationTokenExpiresAt: Date.now() + 15 * 60 * 1000, // 24 hour later from now
+      verificationTokenExpiresAt: Date.now() + 15 * 60 * 1000, // 24 hour later from now,
+      target: "Gain Weight", // Default target
     });
 
     console.log(newUser);
@@ -88,14 +89,14 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
     const user = await User.findOne({ email });
     if (!user)
       return res.status(400).json({ message: "Invalid email or password" });
-    
+
     if (user.isVerified == false)
       return res.status(400).json({ message: "Please verify your email" });
-    
+
     const isMatch = await compare(password, user.password);
 
     if (!isMatch)
@@ -161,13 +162,14 @@ export const verificationAndPassword = async (req, res) => {
     res.status(500).json({ message: "Server error" }); // Send a server error response
   }
 
-  
+
 };
 
 export const editAccount = async (req, res) => {
   const token = req.cookies.token;
   const currentUser = await getUserFromToken(token);
 
+  try {
   try {
     const {
       firstName,

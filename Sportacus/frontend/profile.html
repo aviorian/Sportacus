@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - GetGood</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 <script>
     async function getUser() {
@@ -47,11 +49,11 @@
         
     }
 
-    // Call getUser when the page loads
-    document.addEventListener('DOMContentLoaded', async () => {
-        await getUser();
-    });
-</script>
+        // Call getUser when the page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            await getUser();
+        });
+    </script>
     <div class="login-container">
         <h2>Profil Bilgileri</h2>
         <form id="editForm" onsubmit="return editUser(event)">
@@ -65,7 +67,7 @@
             <input type="text" id="lastName" required>
 
             <label for="birthDate">Doğum Tarihi *</label>
-            <input type="date" id="birthDate" disabled>
+            <input type="text" id="birthDate" disabled>
 
             <label for="birthCountry">Doğum Ülkesi *</label>
             <input type="text" id="birthCountry" disabled>
@@ -75,12 +77,12 @@
 
             <label for="gender">Cinsiyet *</label>
             <input type="gender" id="gender" disabled>
-         
+
             <label for="address">Adres</label>
             <input type="text" id="address" disabled>
 
             <label for="phone">Telefon</label>
-            <input type="tel" id="phone" >
+            <input type="tel" id="phone">
 
             <label for="email">Email *</label>
             <input type="email" id="email" required>
@@ -119,7 +121,7 @@
                 document.getElementById('error-message').textContent = 'Geçerli bir email giriniz!';
                 return false;
             }
-            
+
             //API Endpoint http://localhost:3000/api/auth/register
 
             // Send the registration request to the backend API
@@ -155,4 +157,5 @@
         }
     </script>
 </body>
+
 </html>

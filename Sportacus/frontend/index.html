@@ -15,6 +15,7 @@
         <button onclick="logout()">Çıkış Yap</button>
         <button onclick="deleteAccount()">Hesabımı Sil</button>
         <button onclick="editAccount()">profil</button>
+        <button onclick="editOrSetTrainingProfile()">antrenman profili oluştur</button>>
     </div>
 
     <script>
@@ -57,11 +58,14 @@
             const response = fetch('http://localhost:3000/api/auth/getUser', {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
-                    },
+                        'Content-Type': 'application/json',},
                 });
                 window.location.href = "profile.html";
+        }
+        function editOrSetTrainingProfile() {
+             window.location.href = "trainingProfile.html"; // getUser is already getting fetched at trainingProfile.html same as editaccount
         } 
+        
     </script>
 
 </body>
