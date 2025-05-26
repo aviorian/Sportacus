@@ -61,7 +61,6 @@ export const register = async (req, res) => {
       username,
       verificationToken: verificationtoken,
       verificationTokenExpiresAt: Date.now() + 15 * 60 * 1000, // 24 hour later from now,
-      target: "Gain Weight", // Default target
     });
 
     console.log(newUser);
@@ -169,7 +168,7 @@ export const editAccount = async (req, res) => {
   const token = req.cookies.token;
   const currentUser = await getUserFromToken(token);
 
-  try {
+
   try {
     const {
       firstName,
@@ -202,26 +201,75 @@ export const editAccount = async (req, res) => {
     console.error("Edit Account Error:", err);
     res.status(500).json({ message: "Server error" });
   }
-  };
-    export const  getUser= async (req, res) => {
-      const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
-      const currentUser = await getUserFromToken(token); // get the user form the token
-      if (!currentUser) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      else {
-        return res.status(200).json({ message: "User found", user: currentUser });
-      }
+};
+export const getUser = async (req, res) => {
+  const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
+  const currentUser = await getUserFromToken(token); // get the user form the token
+  if (!currentUser) {
+    return res.status(401).json({ message: "Unauthorized" });
   }
+  else {
+    return res.status(200).json({ message: "User found", user: currentUser });
+  }
+};
 
 
 
-  export const setAndSendVerificationCode = async (req, res) => {
-    const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
-    const currentUser = await getUserFromToken(token);
+export const setAndSendVerificationCode = async (req, res) => {
+  const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
+  const currentUser = await getUserFromToken(token);
+  currentUser.verificationToken = Math.floor(100000 + Math.random() * 900000);
+  currentUser.verificationTokenExpiresAt = Date.now() + 15 * 60 * 1000,
+    await currentUser.save();
+  await sendVerificationEmail(currentUser.email, currentUser.verificationToken);
+  return res.status(200).json({ message: "Verification Code Sent", });
+};
+
+export const editOrSetTrainingProfile = async (req, res) => {
+  try {
+    const currentUser = await getUserFromToken(req.cookies.token);
+    if (!currentUser) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { target } = req.body;
+    if (!target) {
+      return res.status(400).json({ message: "Target is required" });
+    }
+
+    // Make sure TrainingProfile exists
+    /*
+        if (!currentUser.TrainingProfile) {
+      currentUser.TrainingProfile = {};
+    }
+    */
+
+    currentUser.target = target;
+    await currentUser.save();
+
+    return res.status(200).json({ message: "Training profile updated successfully" });
+  } catch (error) {
+    console.error("Error in editOrSetTrainingProfile:", error);
+    return res.status(500).json({ message: "hedef kaydedilemedi" });
+  }
+};
+export const resetPassword = async (req, res) => {
+  console.log("req.body:", req.body);
+  try {
+    const { email } = req.body;
+    const currentUser = await User.findOne({ email });
+    console.log("Current User:", currentUser, "email: ", email); // Log the current user for debugging
+    if (!currentUser) {
+      return res.status(404).json({ success: false, message: "Kullanıcı bulunamadı." });
+    }
     currentUser.verificationToken = Math.floor(100000 + Math.random() * 900000);
-    currentUser.verificationTokenExpiresAt = Date.now() + 15 * 60 * 1000,
+    currentUser.verificationTokenExpiresAt = Date.now() + 15 * 60 * 1000;
     await currentUser.save();
     //await sendVerificationEmail(currentUser.email, currentUser.verificationToken);
-    return res.status(200).json({ message: "Verification Code Sent", });
+    //const resetURL = `${process.env.FRONTEND_URL}/reset-password/${user.verificationToken}`; // Create a reset URL
+    return res.status(200).json({ message: "Şifre yenileme linki başarıyla gönderildi." });
+  } catch (error) {
+    console.error("Reset password error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
+};

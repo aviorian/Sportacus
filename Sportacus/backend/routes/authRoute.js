@@ -7,12 +7,15 @@ import {
   verificationAndPassword,
   editAccount,
   getUser,
-  setAndSendVerificationCode
+  setAndSendVerificationCode,
   editOrSetTrainingProfile,
+  resetPassword,
 } from "../controllers/authController.js";
 
 
 const router = Router();
+
+router.post("/resetPassword", resetPassword);
 
 
 router.post("/register", register);// Register New User
@@ -29,7 +32,7 @@ router.post("/editAccount", editAccount);
 
 router.get("/getUser", getUser);
 
-router.get("/sendVerificationCode", setAndSendVerificationCode);
+router.get("/setAndsendVerificationCode", setAndSendVerificationCode);
 
 router.post("/editOrSetTrainingProfile", editOrSetTrainingProfile);
 

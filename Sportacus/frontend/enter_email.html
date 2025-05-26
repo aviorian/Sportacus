@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Şifre Yenileme</title>
+  <style>
+    body {
+      background-image: url('braden-collum-9HI8UJMSdZA-unsplash.jpg');
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Şifre Yenileme</h2>
+  <form form id="editForm" onsubmit="return resetPasswordRequest(event)">
+
+    <label for="email">Email adresiniz:</label>
+    <input type="email" id="email" name="email" placeholder="example@mail.com" required>
+    <button type="submit">Kurtarma Maili Gönder</button>
+
+  </form>
+
+  <script>
+    function resetPasswordRequest(event) {
+      event.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const errorMessage = document.getElementById("error-message");
+
+      if (email === "") {
+        errorMessage.textContent = "Lütfen email adresinizi giriniz.";
+        return false;
+      }
+
+      const requestBody = { email: email };
+      console.log("email: ", email)
+      fetch('http://localhost:3000/api/auth/resetPassword', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include', // <-- This sends cookies!
+        body: JSON.stringify(requestBody)
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message === "Email sent") {
+            alert("Şifre yenileme maili gönderildi.");
+          } else {
+            errorMessage.textContent = "Bir hata oluştu. Lütfen tekrar deneyin.";
+          }
+          currentUser = User.findOne({ email });
+          generateTokenAndSetCookie(currentUser._id); // Call the function to generate token and set cookie
+          window.href = "Create_password.html"; // Redirect to password creation page
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          errorMessage.textContent = "Bir hata oluştu. Lütfen tekrar deneyin.";
+        });
+
+      return false; // Prevent form submission
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrainingProfile - GetGood</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <script>
+
+
+        async function getUser() {
+            fetch('http://localhost:3000/api/auth/getUser', {
+                method: 'GET', // Use GET for fetching user data
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Include cookies for authentication
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch user data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("User name:", data, data.user.username);
+                    // Populate the form fields with the user data
+                    console.log("User data:", data);
+                    document.getElementById('birthDate').value = data.user.birthDate;
+
+                    document.getElementById('gender').value = data.user.gender;
+
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                    document.getElementById('error-message').textContent = 'Kullanıcı bilgileri alınamadı.';
+                });
+
+        }
+
+
+        // Call getUser when the page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            await getUser();
+        });
+    </script>
+    <div class="login-container">
+        <h2>Profil Bilgileri</h2>
+        <form id="editForm" onsubmit="return setTrainingProfile(event)">
+
+
+            <label for="birthDate">birthDate</label>
+            <input type="text" id="birthDate" disabled>
+
+            <label for="gender">gender</label>
+            <input type="text" id="gender" disabled>
+
+            <label for="target">Target</label>
+            <select id="target" required>
+                <option value="">Select...</option>
+                <option value="Gain Weight">Gain Weight</option>
+                <option value="Lose Weight">Lose Weight</option>
+                <option value="Eat Healthy">Eat Healthy</option>
+                <option value="Muscle Building">Muscle Building</option>
+            </select>
+            <button type="submit">Kaydet</button>
+            <button type="button" onclick="window.location.href='index.html'">Ana Menüye Dön</button>
+            <p id="error-message"></p>
+
+
+
+
+        </form>
+    </div>
+
+    <script>
+        function setTrainingProfile(event) {
+            event.preventDefault();
+
+
+            const target = document.getElementById('target').value;
+
+            const userTarget = {
+                    target: target
+            };
+
+            console.log("before fetch" , userTarget);
+
+            // Send the registration request to the backend API
+            fetch('http://localhost:3000/api/auth/editOrSetTrainingProfile', {
+                
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userTarget) // Send the user data as JSON to backend
+                /*
+                looks like this:
+                {
+                    "TrainingProfile": {
+                        "target": "Gain Weight"
+                    }
+                }
+                */
+
+
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("after fetch");
+                    if (data.message === "Training profile updated successfully") {
+                        alert("Profil başarıyla güncellendi!");
+                    } else if (data.message) {
+                        document.getElementById('error-message').textContent = data.message;
+                    } else {
+                        document.getElementById('error-message').textContent = "Bir hata oluştu. Lütfen tekrar deneyin.";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error during registration:", error);//is for developers to see
+                    // Show error if network or server issues
+                    document.getElementById('error-message').textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.'; //setting error-message is for users
+                });
+
+            return false;
+        }
+
+    </script>
+</body>
+
+</html>
