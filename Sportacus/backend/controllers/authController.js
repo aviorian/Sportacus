@@ -266,7 +266,7 @@ export const resetPassword = async (req, res) => {
     currentUser.verificationToken = Math.floor(100000 + Math.random() * 900000);
     currentUser.verificationTokenExpiresAt = Date.now() + 15 * 60 * 1000;
     await currentUser.save();
-    //await sendVerificationEmail(currentUser.email, currentUser.verificationToken);
+    await sendVerificationEmail(currentUser.email, currentUser.verificationToken);
     //const resetURL = `${process.env.FRONTEND_URL}/reset-password/${user.verificationToken}`; // Create a reset URL
     return res.status(200).json({ message: "Şifre yenileme linki başarıyla gönderildi." });
   } catch (error) {

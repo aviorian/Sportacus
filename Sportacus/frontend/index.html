@@ -56,22 +56,16 @@
             }
         }
         function editAccount() {
-            
-            const response = fetch('http://localhost:3000/api/auth/getUser', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',},
-                });
-                window.location.href = "profile.html";
+            window.location.href = "profile.html"; // getUser is already getting fetched at profile.html
         }
         function editOrSetTrainingProfile() {
-             window.location.href = "trainingProfile.html"; // getUser is already getting fetched at trainingProfile.html same as editaccount
+            window.location.href = "trainingProfile.html"; 
         }
         function recommendDietProgram() {
-            window.location.href = "recommendDietPrograms.html"; // Assuming you have a diet program page
+            window.location.href = "recommendDietPrograms.html";
         }
         function searchDiets() {
-            window.location.href = "searchDiets.html"; // Assuming you have a diet program page
+            window.location.href = "searchDiets.html";
         }
         
     </script>

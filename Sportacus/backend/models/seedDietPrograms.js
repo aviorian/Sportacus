@@ -1,15 +1,18 @@
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+const __dirname = dirname(fileURLToPath(import.meta.url)); //get directory name of the current module
+dotenv.config({ path: path.resolve(__dirname, "../../.env") }); //../../.env means go up two directories from the current file and find .env file
+//path.resolve combines both
+
 import mongoose from "mongoose";
 import dietProgram from "./dietProgram.js"; // adjust path if needed
-
 
 // Connect to your MongoDB
 export const connectDB = async () => {
   try {
-    console.log("mongore uri", process.env.MONGO_URI);
-    const conn = await mongoose.connect("mongodb+srv://erdemkaraahmet0:8K2OvMt55UqweJb0@cluster0.2btrcpz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(`MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
     console.error("MongoDB connection error:", error.message);
@@ -31,6 +34,20 @@ const programs = [
     detail: "this is the detail of the muscle gain plan",
     targetCalories: 2800,
     targetMacros: { protein: 180, carbs: 300, fats: 80 },
+  },
+  {
+    name: "Gain Weight",
+    shortDescription: "A balanced diet to help you gain weight healthily.",
+    detail: "this is the detail of the gain weight plan",
+    targetCalories: 2500,
+    targetMacros: { protein: 150, carbs: 250, fats: 70 },
+  },
+  {
+    name: "Eat Healthy",
+    shortDescription: "A diet focused on whole foods and balanced nutrition.",
+    detail: "this is the detail of the eat healthy plan",
+    targetCalories: 2000,
+    targetMacros: { protein: 120, carbs: 200, fats: 60 },
   },
 ];
 
