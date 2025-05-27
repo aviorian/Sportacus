@@ -16,6 +16,8 @@
         <button onclick="deleteAccount()">Hesabımı Sil</button>
         <button onclick="editAccount()">profil</button>
         <button onclick="editOrSetTrainingProfile()">antrenman profili oluştur</button>>
+        <button onclick="recommendDietProgram()">Recommend me a Diet Program</button>>
+        <button onclick="searchDiets()">Search for a Diet Program</button>>
     </div>
 
     <script>
@@ -64,7 +66,13 @@
         }
         function editOrSetTrainingProfile() {
              window.location.href = "trainingProfile.html"; // getUser is already getting fetched at trainingProfile.html same as editaccount
-        } 
+        }
+        function recommendDietProgram() {
+            window.location.href = "recommendDietPrograms.html"; // Assuming you have a diet program page
+        }
+        function searchDiets() {
+            window.location.href = "searchDiets.html"; // Assuming you have a diet program page
+        }
         
     </script>
 

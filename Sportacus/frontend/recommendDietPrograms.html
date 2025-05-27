@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Programs</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    #dietProgramsContainer {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 16px;
+    }
+
+    .diet-program {
+        width: 100%;
+        box-sizing: border-box;
+        border: 2px solid #4CAF50;
+        border-radius: 10px;
+        padding: 16px;
+        margin: 16px 0;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .desc {
+        color: #000000;
+    }
+
+    .button-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+        justify-content: flex-end;
+    }
+
+    .button-row button {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background: #fff;
+        margin: 5% auto;
+        padding: 24px;
+        border-radius: 10px;
+        max-width: 500px;
+        position: relative;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .close {
+        position: absolute;
+        right: 16px;
+        top: 8px;
+        font-size: 28px;
+        cursor: pointer;
+    }
+
+    .register-btn {
+        margin-bottom: 16px;
+        padding: 8px 16px;
+        background: #4CAF50;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .register-btn.unregister {
+        background: #e53935;
+    }
+
+    .modal-detail-title,
+    .modal-detail-desc {
+        color: #000;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="dietProgramsContainer"></div>
+    <p id="error-message" style="color:red"></p>
+
+    <!-- Modal -->
+    <div id="dietModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div id="modalDetail"></div>
+            <button id="registerBtn" class="register-btn"></button>
+        </div>
+    </div>
+
+    <script>
+        // Simulate user's registered diet (replace with real user data in production)
+        let registeredDietId = null; // or set to the registered diet's _id
+
+        async function getDietPrograms() {
+            fetch('http://localhost:3000/api/auth/listDietPrograms', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch diet programs');
+                }
+                return response.json();
+            }).then(data => {
+                const dietProgramsContainer = document.getElementById('dietProgramsContainer');
+                dietProgramsContainer.innerHTML = '';
+                (data.programs || []).forEach(program => {
+                    const programDiv = document.createElement('div');
+                    programDiv.className = 'diet-program';
+                    programDiv.innerHTML = `
+                        <h3>${program.name}</h3>
+                        <p class="desc">${program.shortDescription}</p>
+                        <div class="button-row">
+                            <button onclick="viewDietProgramDetail('${program._id}')">View Detail</button>
+                        </div>
+                    `;
+                    dietProgramsContainer.appendChild(programDiv);
+                });
+            }).catch(error => {
+                console.error('Error fetching diet programs:', error);
+                document.getElementById('error-message').textContent = 'Diet programs could not be fetched.';
+            });
+        }
+
+        function selectDietProgram(id) {
+            // Your select logic here
+            alert("Selected diet program: " + id);
+        }
+
+        function viewDietProgramDetail(id) {
+            fetch('http://localhost:3000/api/auth/listDietPrograms', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            })
+            .then(response => response.json())
+            .then(data => {
+                const programs = data.programs || [];
+                const program = programs.find(p => String(p._id) === String(id));
+                if (!program) return;
+
+                // Fill modal content
+                document.getElementById('modalDetail').innerHTML = `
+                    <h2 class="modal-detail-title">${program.name}</h2>
+                    <p class="modal-detail-desc">${program.detail}</p>
+                    <div class="macros">
+                        <strong>Hedef Kalori:</strong> ${program.targetCalories} kcal<br>
+                        <strong>Makrolar:</strong><br>
+                        Protein: ${program.targetMacros.protein}g<br>
+                        Karbonhidrat: ${program.targetMacros.carbs}g<br>
+                        Yağ: ${program.targetMacros.fats}g
+                    </div>
+                `;
+
+                // Set button state
+                const registerBtn = document.getElementById('registerBtn');
+                if (registeredDietId === id) {
+                    registerBtn.textContent = "Unregister From This Diet";
+                    registerBtn.classList.add("unregister");
+                } else {
+                    registerBtn.textContent = "Register to This Diet";
+                    registerBtn.classList.remove("unregister");
+                }
+                registerBtn.onclick = function() {
+                    if (registeredDietId === id) {
+                        registeredDietId = null;
+                        registerBtn.textContent = "Register to This Diet";
+                        registerBtn.classList.remove("unregister");
+                    } else {
+                        registeredDietId = id;
+                        registerBtn.textContent = "Unregister From This Diet";
+                        registerBtn.classList.add("unregister");
+                    }
+                };
+
+                // Show modal
+                document.getElementById('dietModal').style.display = "block";
+            });
+        }
+
+        // Close modal logic
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('closeModal').onclick = function() {
+                document.getElementById('dietModal').style.display = "none";
+            };
+            window.onclick = function(event) {
+                if (event.target === document.getElementById('dietModal')) {
+                    document.getElementById('dietModal').style.display = "none";
+                }
+            };
+        });
+
+        window.onload = getDietPrograms;
+    </script>
+</body>
+
+</html>

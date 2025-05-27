@@ -33,6 +33,8 @@ const userSchema = new Schema(
     verificationTokenExpiresAt: Date,
     
     TrainingProfile: TrainingProfile, // <-- subdocument
+
+    dietProgram: { type: Schema.Types.ObjectId, ref: "dietProgram" }, // reference to dietProgram model
     
   },
   { timestamps: true }

@@ -10,13 +10,13 @@ import {
   setAndSendVerificationCode,
   editOrSetTrainingProfile,
   resetPassword,
+  listDietPrograms,
 } from "../controllers/authController.js";
 
 
 const router = Router();
 
 router.post("/resetPassword", resetPassword);
-
 
 router.post("/register", register);// Register New User
 
@@ -35,5 +35,7 @@ router.get("/getUser", getUser);
 router.get("/setAndsendVerificationCode", setAndSendVerificationCode);
 
 router.post("/editOrSetTrainingProfile", editOrSetTrainingProfile);
+
+router.get("/listDietPrograms", listDietPrograms);
 
 export default router;

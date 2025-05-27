@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { hash, compare } from "bcryptjs";
 import User from "../models/user.js";
+import dietProgram from "../models/dietProgram.js"; // Import the dietProgram model
 import { generateTokenAndSetCookie, getUserFromToken } from "../utils/generateTokenAndSetCookie.js";
 import { sendVerificationEmail } from "../mailtrap/emails.js"; // Import the email sending function
 
@@ -270,6 +271,15 @@ export const resetPassword = async (req, res) => {
     return res.status(200).json({ message: "Şifre yenileme linki başarıyla gönderildi." });
   } catch (error) {
     console.error("Reset password error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+export const listDietPrograms = async (req, res) => {
+  try {
+    const programs = await dietProgram.find();
+    return res.status(200).json({ programs }); // programs is an array
+  } catch (error) {
+    console.error("Error listing diet programs:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };
