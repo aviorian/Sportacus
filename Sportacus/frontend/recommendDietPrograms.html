@@ -92,8 +92,11 @@
 </head>
 
 <body>
-    <div id="dietProgramsContainer"></div>
-    <p id="error-message" style="color:red"></p>
+    <div id="mainDietContainer" style="max-width:600px; margin:0 auto; padding:16px;">
+        <div id="dietProgramsContainer"></div>
+        <button type="button" onclick="window.location.href='index.html'" style="display:block; width:100%; margin-top:24px;">Ana Menüye Dön</button>
+        <p id="error-message" style="color:red"></p>
+    </div>
 
     <!-- Modal -->
     <div id="dietModal" class="modal">
@@ -101,9 +104,11 @@
             <span class="close" id="closeModal">&times;</span>
             <div id="modalDetail"></div>
             <button id="registerBtn" class="register-btn"></button>
+            
         </div>
+        
     </div>
-
+    
     <script>
         // Simulate user's registered diet (replace with real user data in production)
         let registeredDietId = null; // or set to the registered diet's _id
@@ -219,6 +224,7 @@
 
         window.onload = getDietPrograms;
     </script>
+    
 </body>
 
 </html>
