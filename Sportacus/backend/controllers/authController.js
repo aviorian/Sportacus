@@ -3,7 +3,7 @@ import { hash, compare } from "bcryptjs";
 import User from "../models/user.js";
 import dietProgram from "../models/dietProgram.js"; // Import the dietProgram model
 import { generateTokenAndSetCookie, getUserFromToken } from "../utils/generateTokenAndSetCookie.js";
-import { sendVerificationEmail } from "../mailtrap/emails.js"; // Import the email sending function
+import { sendVerificationEmail, sendForgotPasswordEmail } from "../mailtrap/emails.js"; // Import the email sending function
 
 
 export const register = async (req, res) => {
@@ -140,9 +140,11 @@ export const verificationAndPassword = async (req, res) => {
   try {
     const { verificationCode, password } = req.body; // Get the vericication code and password from the request body
 
-    const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
-    const currentUser = await getUserFromToken(token); // get the user form the token
-
+    const { email } = req.body;
+    const currentUser = await User.findOne({ email });
+    if (!currentUser) {
+    console.log("User not found"); // Log the error
+    }
     if (
       currentUser.verificationToken == verificationCode &&
       currentUser.verificationTokenExpiresAt > Date.now()
@@ -266,7 +268,7 @@ export const resetPassword = async (req, res) => {
     currentUser.verificationToken = Math.floor(100000 + Math.random() * 900000);
     currentUser.verificationTokenExpiresAt = Date.now() + 15 * 60 * 1000;
     await currentUser.save();
-    await sendVerificationEmail(currentUser.email, currentUser.verificationToken);
+    await sendForgotPasswordEmail(currentUser.email, currentUser.verificationToken);
     //const resetURL = `${process.env.FRONTEND_URL}/reset-password/${user.verificationToken}`; // Create a reset URL
     return res.status(200).json({ message: "Şifre yenileme linki başarıyla gönderildi." });
   } catch (error) {

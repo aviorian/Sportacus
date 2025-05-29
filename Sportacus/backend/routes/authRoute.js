@@ -16,8 +16,6 @@ import {
 
 const router = Router();
 
-router.post("/resetPassword", resetPassword);
-
 router.post("/register", register);// Register New User
 
 router.post("/login", login);// Login User
@@ -33,6 +31,8 @@ router.post("/editAccount", editAccount);
 router.get("/getUser", getUser);
 
 router.get("/setAndsendVerificationCode", setAndSendVerificationCode);
+
+router.post("/resetPassword", resetPassword);
 
 router.post("/editOrSetTrainingProfile", editOrSetTrainingProfile);
 

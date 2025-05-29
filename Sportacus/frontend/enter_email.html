@@ -72,12 +72,13 @@
         return false;
       }
 
-      const requestBody = { email: email };
-      console.log("email: ", email)
+      const token = document.cookie;
+      const requestBody = { email: email, token: token };
+      console.log("email: ", email, "token", token);
       fetch('http://localhost:3000/api/auth/resetPassword', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         credentials: 'include', // <-- This sends cookies!
         body: JSON.stringify(requestBody)
@@ -91,7 +92,7 @@
           }
           currentUser = User.findOne({ email });
           generateTokenAndSetCookie(currentUser._id); // Call the function to generate token and set cookie
-          window.href = "Create_password.html"; // Redirect to password creation page
+          window.href = "reset_password.html"; // Redirect to password creation page
         })
         .catch(error => {
           console.error('Error:', error);
