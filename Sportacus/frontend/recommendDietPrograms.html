@@ -123,7 +123,15 @@
             }).then(data => {
                 const dietProgramsContainer = document.getElementById('dietProgramsContainer');
                 dietProgramsContainer.innerHTML = '';
-                (data.programs || []).forEach(program => {
+                const programs = data.programs || [];
+                // Shuffle and pick up to 3 random programs
+                const shuffled = programs.sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, 3);
+                if (selected.length === 0) {
+                    dietProgramsContainer.innerHTML = "<p>No diet programs found.</p>";
+                    return;
+                }
+                selected.forEach(program => {
                     const programDiv = document.createElement('div');
                     programDiv.className = 'diet-program';
                     programDiv.innerHTML = `

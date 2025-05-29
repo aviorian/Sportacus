@@ -9,6 +9,52 @@ const TrainingProfile = new Schema(
       required: false,
       enum: ["Gain Weight", "Lose Weight", "Eat Healthy", "Muscle Building"],
     },
+    weight: { type: Number }, // in kg
+    height: { type: Number }, // in cm
+    bmi: { type: Number }, // calculated, can be set by backend or frontend
+    chronicIllnesses: [{
+      type: String,
+      enum: [
+        "Insulin Resistance",
+        "Diabetes Disease",
+        "Cardiovascular Diseases",
+        "Fatty Liver",
+        "Thyroid Disorder",
+        "Blood pressure",
+        "High Cholesterol"
+      ]
+    }],
+    workingStyle: {
+      type: String,
+      enum: [
+        "I'm in the Office or at Home",
+        "I Work Standing",
+        "Daily Long Walks",
+        "I Work in a Job That Requires Physical Strength"
+      ]
+    },
+    physicalActivity: {
+      type: String,
+      enum: [
+        "Usually Inactive",
+        "1-3 Days a Week",
+        "4-5 Days a Week",
+        "6-7 Days a Week",
+        "Professional Athlete"
+      ]
+    },
+    habits: [{
+      type: String,
+      enum: [
+        "I eat late.",
+        "My sleep is irregular.",
+        "I consume alcohol or carbonated drinks.",
+        "I have sweet cravings.",
+        "My meals are irregular.",
+        "I skip breakfast.",
+        "I have an emotional eating problem."
+      ]
+    }]
   },
   { _id: false } // prevents creation of a separate _id for the subdocument
 );

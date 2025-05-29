@@ -4,6 +4,7 @@ import {
   login,
   logout,
   register,
+  setPassword,
   verificationAndPassword,
   editAccount,
   getUser,
@@ -23,6 +24,8 @@ router.post("/login", login);// Login User
 router.post("/logout", logout);// Logout (frontend can just delete token or user info locally)
 
 router.post("/delete", deleteAccount);
+
+router.post("/setPassword", setPassword)
 
 router.post("/verificationAndPassword", verificationAndPassword);
 

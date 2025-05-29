@@ -136,6 +136,35 @@ export const deleteAccount = async (req, res) => {
     res.status(500).json({ message: "Error, couldn't delete" });
   }
 };
+export const setPassword = async (req, res) => {
+  try {
+    const { verificationCode, password } = req.body; // Get the vericication code and password from the request body
+      const token = req.cookies.token; // .token accesses the specific cookie named token from the req.cookies object.
+  const currentUser = await getUserFromToken(token);
+
+    if (!currentUser) {
+    console.log("User not found"); // Log the error
+    }
+    if (
+      currentUser.verificationToken == verificationCode &&
+      currentUser.verificationTokenExpiresAt > Date.now()
+    ) {
+      currentUser.password = await hash(password, 10); // Hash the password
+      currentUser.isVerified = true; // Set the user as verified
+      currentUser.verificationToken = undefined; // Clear the verification token
+      currentUser.verificationTokenExpiresAt = undefined; // Clear the verification token expiration date
+      await currentUser.save(); // Save the updated user to the database
+
+      return res.status(200).json({ message: "Verification successful" }); // Verification successful
+    } else {
+      return res.status(400).json({ message: "Verification failed" });
+    }
+  } catch (error) {
+    console.error("Verification Error:", error); // Log the error
+    res.status(500).json({ message: "Server error" }); // Send a server error response
+  }
+};
+
 export const verificationAndPassword = async (req, res) => {
   try {
     const { verificationCode, password } = req.body; // Get the vericication code and password from the request body
@@ -235,19 +264,34 @@ export const editOrSetTrainingProfile = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { target } = req.body;
-    if (!target) {
-      return res.status(400).json({ message: "Target is required" });
+    const {
+      target,
+      weight,
+      height,
+      bmi,
+      chronicIllnesses,
+      workingStyle,
+      physicalActivity,
+      habits
+    } = req.body;
+
+    if (!target || !weight || !height || !workingStyle || !physicalActivity) {
+      return res.status(400).json({ message: "Lütfen tüm zorunlu alanları doldurun." });
     }
 
-    // Make sure TrainingProfile exists
-    /*
-        if (!currentUser.TrainingProfile) {
+    if (!currentUser.TrainingProfile) {
       currentUser.TrainingProfile = {};
     }
-    */
 
-    currentUser.target = target;
+    currentUser.TrainingProfile.target = target;
+    currentUser.TrainingProfile.weight = weight;
+    currentUser.TrainingProfile.height = height;
+    currentUser.TrainingProfile.bmi = bmi;
+    currentUser.TrainingProfile.chronicIllnesses = chronicIllnesses || [];
+    currentUser.TrainingProfile.workingStyle = workingStyle;
+    currentUser.TrainingProfile.physicalActivity = physicalActivity;
+    currentUser.TrainingProfile.habits = habits || [];
+
     await currentUser.save();
 
     return res.status(200).json({ message: "Training profile updated successfully" });
@@ -270,7 +314,7 @@ export const resetPassword = async (req, res) => {
     await currentUser.save();
     await sendForgotPasswordEmail(currentUser.email, currentUser.verificationToken);
     //const resetURL = `${process.env.FRONTEND_URL}/reset-password/${user.verificationToken}`; // Create a reset URL
-    return res.status(200).json({ message: "Şifre yenileme linki başarıyla gönderildi." });
+    return res.status(200).json({ message: "Email sent" });
   } catch (error) {
     console.error("Reset password error:", error);
     return res.status(500).json({ message: "Server error" });

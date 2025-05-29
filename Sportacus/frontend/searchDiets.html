@@ -87,7 +87,7 @@
         form label {
             font-weight: bold;
         }
-        form select, form button {
+        form select, form button, form input {
             margin-top: 8px;
             width: 100%;
             padding: 8px;
@@ -106,6 +106,29 @@
             <option value="Eat Healthy">Eat Healthy</option>
             <option value="Muscle Building">Muscle Building</option>
         </select>
+
+        <label for="targetWeight">Target Weight (kg):</label>
+        <input type="number" id="targetWeight" name="targetWeight" min="1" required>
+
+        <label for="workingStyle">Working Style:</label>
+        <select id="workingStyle" name="workingStyle" required>
+            <option value="">-- Select --</option>
+            <option value="Office/Home">I'm in the Office or at Home</option>
+            <option value="Standing">I Work Standing</option>
+            <option value="Long Walks">Daily Long Walks</option>
+            <option value="Physical Strength">I Work in a Job That Requires Physical Strength</option>
+        </select>
+
+        <label for="physicalActivity">Physical Activities:</label>
+        <select id="physicalActivity" name="physicalActivity" required>
+            <option value="">-- Select --</option>
+            <option value="Inactive">Usually Inactive</option>
+            <option value="1-3">1-3 Days a Week</option>
+            <option value="4-5">4-5 Days a Week</option>
+            <option value="6-7">6-7 Days a Week</option>
+            <option value="Pro">Professional Athlete</option>
+        </select>
+
         <button type="submit">Search</button>
     </form>
 
@@ -136,11 +159,14 @@
         document.getElementById('searchForm').onsubmit = function(e) {
             e.preventDefault();
             const target = document.getElementById('target').value;
-            if (!target) return;
-            searchDietPrograms(target);
+            const targetWeight = document.getElementById('targetWeight').value;
+            const workingStyle = document.getElementById('workingStyle').value;
+            const physicalActivity = document.getElementById('physicalActivity').value;
+            if (!target || !targetWeight || !workingStyle || !physicalActivity) return;
+            searchDietPrograms({ target, targetWeight, workingStyle, physicalActivity });
         };
 
-        function searchDietPrograms(target) {
+        function searchDietPrograms(criteria) {
             fetch('http://localhost:3000/api/auth/listDietPrograms', {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
@@ -151,17 +177,21 @@
                 const dietProgramsContainer = document.getElementById('dietProgramsContainer');
                 dietProgramsContainer.innerHTML = '';
                 const programs = data.programs || [];
-                // Filter programs by target keywords
-                const keywords = targetKeywords[target].map(k => k.toLowerCase());
+                // For now, filter by target keywords, then pick 3 random programs
+                const keywords = targetKeywords[criteria.target].map(k => k.toLowerCase());
                 const filtered = programs.filter(program => {
                     const text = (program.name + " " + program.shortDescription + " " + program.detail).toLowerCase();
                     return keywords.some(keyword => text.includes(keyword));
                 });
-                if (filtered.length === 0) {
+                // Shuffle and pick up to 3 random programs
+                const shuffled = filtered.sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, 3);
+
+                if (selected.length === 0) {
                     dietProgramsContainer.innerHTML = "<p>No diet programs found for this target.</p>";
                     return;
                 }
-                filtered.forEach(program => {
+                selected.forEach(program => {
                     const programDiv = document.createElement('div');
                     programDiv.className = 'diet-program';
                     programDiv.innerHTML = `
